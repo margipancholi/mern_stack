@@ -1,133 +1,232 @@
-import React from 'react'
+import React, { useState } from "react";
+import ConformationModal from "./conformationModal";
 
 export const EmployeeCreate = () => {
-    return (
-        <form action="#" method="POST">
-            <div className="shadow sm:rounded-md sm:overflow-hidden">
-                <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
-                    <div>
-                        <h3 className="text-lg leading-6 font-medium text-gray-900">Personal Information</h3>
-                        <p className="mt-1 text-sm text-gray-500">Use a permanent address where you can recieve mail.</p>
-                    </div>
+  const [firstName, setfirstName] = useState("");
+  const [lastName, setlastName] = useState("");
+  const [dateOfJoining, setdateOfJoining] = useState(new Date());
+  const [designation, setdesignation] = useState("");
+  const [employeeType, setemployeeType] = useState("");
+  const [currentStatus, setcurrentStatus] = useState("");
+  const [department, setdepartment] = useState("");
+  const [open, setOpen] = useState(false);
 
-                    <div className="grid grid-cols-6 gap-6">
-                        <div className="col-span-6 sm:col-span-3">
-                            <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
-                                First name
-                            </label>
-                            <input
-                                type="text"
-                                name="first-name"
-                                id="first-name"
-                                autoComplete="given-name"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            />
-                        </div>
+  const addNewUser = () => {
+    const requestBody = {
+      query: `
+          mutation {
+            createEmployee(employeeInput: {
+              firstName:"${firstName}",
+              lastName:"${lastName}",
+              dateOfJoining:"${dateOfJoining}",
+              designation:"${designation}",
+              department:"${department}",
+              employeeType:"${employeeType}",
+              currentStatus:"${currentStatus}"
+            }) {
+              firstName
+              lastName
+              dateOfJoining
+              designation
+              department
+              employeeType
+              currentStatus 
+            }
+          }
+        `,
+    };
 
-                        <div className="col-span-6 sm:col-span-3">
-                            <label htmlFor="last-name" className="block text-sm font-medium text-gray-700">
-                                Last name
-                            </label>
-                            <input
-                                type="text"
-                                name="last-name"
-                                id="last-name"
-                                autoComplete="family-name"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            />
-                        </div>
+    fetch("http://localhost:4000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        if (res.status == 200) {
+          setOpen(true);
+        }
 
-                        <div className="col-span-6 sm:col-span-4">
-                            <label htmlFor="email-address" className="block text-sm font-medium text-gray-700">
-                                Email address
-                            </label>
-                            <input
-                                type="text"
-                                name="email-address"
-                                id="email-address"
-                                autoComplete="email"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            />
-                        </div>
+        return res.json();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-                        <div className="col-span-6 sm:col-span-3">
-                            <label htmlFor="country" className="block text-sm font-medium text-gray-700">
-                                Country
-                            </label>
-                            <select
-                                id="country"
-                                name="country"
-                                autoComplete="country-name"
-                                className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            >
-                                <option>United States</option>
-                                <option>Canada</option>
-                                <option>Mexico</option>
-                            </select>
-                        </div>
+  return (
+    <form
+      action="#"
+      method="POST"
+      onSubmit={(e) => {
+        e.preventDefault();
+        addNewUser();
+      }}
+    >
+      <div className="shadow sm:rounded-md sm:overflow-hidden">
+        <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
+          <div>
+            <h3 className="text-lg leading-6 font-medium text-gray-900">
+              Personal Information
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Use a permanent address where you can receive mail.
+            </p>
+          </div>
 
-                        <div className="col-span-6">
-                            <label htmlFor="street-address" className="block text-sm font-medium text-gray-700">
-                                Street address
-                            </label>
-                            <input
-                                type="text"
-                                name="street-address"
-                                id="street-address"
-                                autoComplete="street-address"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            />
-                        </div>
-
-                        <div className="col-span-6 sm:col-span-6 lg:col-span-2">
-                            <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-                                City
-                            </label>
-                            <input
-                                type="text"
-                                name="city"
-                                id="city"
-                                autoComplete="address-level2"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            />
-                        </div>
-
-                        <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                            <label htmlFor="region" className="block text-sm font-medium text-gray-700">
-                                State / Province
-                            </label>
-                            <input
-                                type="text"
-                                name="region"
-                                id="region"
-                                autoComplete="address-level1"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            />
-                        </div>
-
-                        <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                            <label htmlFor="postal-code" className="block text-sm font-medium text-gray-700">
-                                ZIP / Postal code
-                            </label>
-                            <input
-                                type="text"
-                                name="postal-code"
-                                id="postal-code"
-                                autoComplete="postal-code"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                    <button
-                        type="submit"
-                        className="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Save
-                    </button>
-                </div>
+          <div className="grid grid-cols-6 gap-6">
+            <div className="col-span-6 sm:col-span-3">
+              <label
+                htmlFor="first-name"
+                className="block text-sm font-medium text-gray-700"
+              >
+                First name
+              </label>
+              <input
+                onChange={(e) => {
+                  setfirstName(e.target.value);
+                }}
+                type="text"
+                name="first-name"
+                id="first-name"
+                autoComplete="given-name"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
             </div>
-        </form>
-    );
-}
+
+            <div className="col-span-6 sm:col-span-3">
+              <label
+                htmlFor="last-name"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Last name
+              </label>
+              <input
+                onChange={(e) => {
+                  setlastName(e.target.value);
+                }}
+                type="text"
+                name="last-name"
+                id="last-name"
+                autoComplete="family-name"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+
+            <div className="col-span-6 sm:col-span-3">
+              <label
+                htmlFor="email-address"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Date Of Joining
+              </label>
+              <input
+                onChange={(e) => {
+                  setdateOfJoining(e.target.value);
+                }}
+                type="date"
+                name="joiningDate"
+                id="joiningDate"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+
+            <div className="col-span-6 sm:col-span-3">
+              <label
+                htmlFor="designation"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Designation
+              </label>
+              <select
+                onChange={(e) => {
+                  setdesignation(e.target.value);
+                }}
+                id="designation"
+                name="designation"
+                className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              >
+                <option>CEO</option>
+                <option>CTO</option>
+                <option>Manager</option>
+                <option>Developer</option>
+                <option>IT</option>
+              </select>
+            </div>
+
+            <div className="col-span-3">
+              <label
+                htmlFor="department"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Department
+              </label>
+              <input
+                onChange={(e) => {
+                  setdepartment(e.target.value);
+                }}
+                type="text"
+                name="department"
+                id="department"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+
+            <div className="col-span-6 sm:col-span-6 lg:col-span-3">
+              <label
+                htmlFor="city"
+                className="block text-sm font-medium text-gray-700"
+              >
+                EmployeeType
+              </label>
+              <select
+                onChange={(e) => {
+                  setemployeeType(e.target.value);
+                }}
+                id="designation"
+                name="designation"
+                className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              >
+                <option>Full Time</option>
+                <option>Part-Time</option>
+                <option>Intern</option>
+                <option>Contract</option>
+              </select>
+            </div>
+
+            <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+              <label
+                htmlFor="currentStatus"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Current Status
+              </label>
+              <input
+                onChange={(e) => {
+                  setcurrentStatus(e.target.value);
+                }}
+                type="text"
+                name="currentStatus"
+                id="currentStatus"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+          <button
+            type="submit"
+            className="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+      <ConformationModal open={open} setOpen={setOpen} />
+    </form>
+  );
+};

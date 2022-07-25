@@ -1,52 +1,47 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useState } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
-import EmployeeSearch from './EmployeeSearch'
-import EmployeeTable from './EmployeeTable'
-import { EmployeeCreate } from './EmployeeCreate'
-
+import { Fragment, useState } from "react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import EmployeeSearch from "./EmployeeSearch";
+import EmployeeTable from "./EmployeeTable";
+import { EmployeeCreate } from "./EmployeeCreate";
 
 const user = {
-  name: 'Tom Cook',
-  email: 'tom@example.com',
+  name: "Margi Pancholi",
+  email: "Margipancholi7@gmail.com",
   imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
+    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+};
 const navigation = [
-  { name: 'Home', href: 'home', current: true },
-  { name: 'Directory', href: '#', current: false },
-  { name: 'Search', href: '#', current: false },
-
-]
+  { name: "Home", href: "home" },
+  { name: "Directory", href: "#" },
+  { name: "Search", href: "#" },
+];
 const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
-]
+  { name: "Your Profile", href: "#" },
+  { name: "Settings", href: "#" },
+  { name: "Sign out", href: "#" },
+];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 const ChildComponent = (props) => {
-  console.log("Path ==>", props.path)
+  console.log("Path ==>", props.path);
 
   switch (props.path) {
-
     case "Home":
-      return <EmployeeSearch />
+      return <EmployeeSearch />;
     case "Directory":
-      return <EmployeeCreate />
+      return <EmployeeCreate />;
     case "Search":
-      return <EmployeeTable />
+      return <EmployeeTable />;
 
     default:
-      return <></>
-
+      return <></>;
   }
-
-}
+};
 
 export default function EmployeeDirectory() {
   const [currentPath, setcurrentPath] = useState("Home");
@@ -86,12 +81,12 @@ export default function EmployeeDirectory() {
                           href={item.href}
                           onClick={() => setcurrentPath(item.name)}
                           className={classNames(
-                            item.current
-                              ? 'border-indigo-500 text-gray-900'
-                              : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
-                            'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
+                            item.name === currentPath
+                              ? "border-indigo-500 text-gray-900"
+                              : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                            "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                           )}
-                          aria-current={item.current ? 'page' : undefined}
+                          aria-current={item.current ? "page" : undefined}
                         >
                           {item.name}
                         </a>
@@ -112,7 +107,11 @@ export default function EmployeeDirectory() {
                       <div>
                         <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                           <span className="sr-only">Open user menu</span>
-                          <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
+                          <img
+                            className="h-8 w-8 rounded-full"
+                            src={user.imageUrl}
+                            alt=""
+                          />
                         </Menu.Button>
                       </div>
                       <Transition
@@ -131,8 +130,8 @@ export default function EmployeeDirectory() {
                                 <a
                                   href={item.href}
                                   className={classNames(
-                                    active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm text-gray-700'
+                                    active ? "bg-gray-100" : "",
+                                    "block px-4 py-2 text-sm text-gray-700"
                                   )}
                                 >
                                   {item.name}
@@ -151,7 +150,10 @@ export default function EmployeeDirectory() {
                       {open ? (
                         <XIcon className="block h-6 w-6" aria-hidden="true" />
                       ) : (
-                        <MenuIcon className="block h-6 w-6" aria-hidden="true" />
+                        <MenuIcon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
                       )}
                     </Disclosure.Button>
                   </div>
@@ -167,11 +169,11 @@ export default function EmployeeDirectory() {
                       href={item.href}
                       className={classNames(
                         item.current
-                          ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
-                          : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',
-                        'block pl-3 pr-4 py-2 border-l-4 text-base font-medium'
+                          ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                          : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
+                        "block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                       )}
-                      aria-current={item.current ? 'page' : undefined}
+                      aria-current={item.current ? "page" : undefined}
                     >
                       {item.name}
                     </Disclosure.Button>
@@ -180,11 +182,19 @@ export default function EmployeeDirectory() {
                 <div className="pt-4 pb-3 border-t border-gray-200">
                   <div className="flex items-center px-4">
                     <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                      <img
+                        className="h-10 w-10 rounded-full"
+                        src={user.imageUrl}
+                        alt=""
+                      />
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium text-gray-800">{user.name}</div>
-                      <div className="text-sm font-medium text-gray-500">{user.email}</div>
+                      <div className="text-base font-medium text-gray-800">
+                        {user.name}
+                      </div>
+                      <div className="text-sm font-medium text-gray-500">
+                        {user.email}
+                      </div>
                     </div>
                     <button
                       type="button"
@@ -215,7 +225,9 @@ export default function EmployeeDirectory() {
         <div className="py-10">
           <header>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h1 className="text-3xl font-bold leading-tight text-gray-900">Dashboard</h1>
+              <h1 className="text-3xl font-bold leading-tight text-gray-900">
+                Dashboard
+              </h1>
             </div>
           </header>
           <main>
@@ -226,5 +238,5 @@ export default function EmployeeDirectory() {
         </div>
       </div>
     </>
-  )
+  );
 }
