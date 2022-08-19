@@ -1,8 +1,11 @@
 /* This example requires Tailwind CSS v2.0+ */
 
+import { useState } from "react"
 import { useQuery, gql } from "@apollo/client";
 import NavigationWrapper from "./NavigationWrapper";
 import { Link } from "react-router-dom";
+import { format, addDays } from 'date-fns'
+import DeleteModal from "./deleteModal";
 
 
 const GET_Employees = gql`
@@ -11,6 +14,7 @@ const GET_Employees = gql`
       firstName
       lastName
       _id
+      dateOfBirth
       designation
       employeeType
       currentStatus
@@ -19,17 +23,66 @@ const GET_Employees = gql`
 `;
 
 
-export default function EmployeeSearch() {
+function df(date) {
+  const myDate = addDays(new Date(date), 1)
+  return format(new Date(myDate), "dd-MMM-yyyy")
+}
+
+const deleteEmployee = (id) => {
+  const requestBody = {
+    query: `
+        mutation {
+          deleteEmployee(id:"${id}") {
+            _id           
+          }
+        }
+      `,
+  };
+
+  fetch("http://localhost:4000/graphql", {
+    method: "POST",
+    body: JSON.stringify(requestBody),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Failed!");
+      }
+      if (res.status === 200) {
+        console.log("Deleted")
+      }
+
+      return res.json();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+export default function Home() {
+  const [open, setOpen] = useState(false);
+  const [personData, setpersonData] = useState("");
   const { loading, error, data } = useQuery(GET_Employees);
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   console.log("Data ==>", data);
+
+
   return (
     <NavigationWrapper>
+      <header>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold leading-tight text-gray-900">
+            Home
+          </h1>
+        </div>
+      </header>
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
-            <h1 className="text-xl font-semibold text-gray-900">Users</h1>
+
             <p className="mt-2 text-sm text-gray-700">
               A list of all the users in your account including their name,
               title, email and role.
@@ -83,6 +136,18 @@ export default function EmployeeSearch() {
                       >
                         Current Status
                       </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Date of Birth
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+
+                      </th>
                     </tr>
                   </thead>
 
@@ -104,6 +169,18 @@ export default function EmployeeSearch() {
                         <td className=" whitespace-nowrap py-4 pl-3 pr-4 text-sm text-gray-500">
                           {person.currentStatus}
                         </td>
+                        <td className=" whitespace-nowrap py-4 pl-3 pr-4 text-sm text-gray-500">
+                          {/* {new Date(person.dateOfBirth).getDate()+1} */}
+                          {df(person.dateOfBirth)}
+                        </td>
+                        <td className=" whitespace-nowrap py-4 pl-3 pr-4 text-sm text-gray-500">
+                          <button onClick={() => {
+                            setpersonData(person)
+                            setOpen(!open)
+                          }} className="outline-none">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -112,6 +189,7 @@ export default function EmployeeSearch() {
             </div>
           </div>
         </div>
+        <DeleteModal openDelete={open} setOpenDelete={setOpen} person={personData} deleteFn={deleteEmployee} />
       </div>
     </NavigationWrapper>
   );
